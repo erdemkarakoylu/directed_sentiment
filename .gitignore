@@ -1,0 +1,11 @@
+*.pyc
+data/
+*.ckpt
+*.yaml
+events.out.tf*
+mlflow*
+lcfs_runs/
+*.ipynb
+*.png
+*.db
+*.txt
