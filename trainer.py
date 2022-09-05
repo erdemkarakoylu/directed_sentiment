@@ -1,6 +1,6 @@
 from pytorch_lightning.utilities.cli import LightningCLI
 from lcf_datamodule import DataModule
-from lcf_pl_model import LCFS_BERT_PL
+from packages.lcf_pl_model import LCFS_BERT_PL
 
 
 if __name__ == '__main__':

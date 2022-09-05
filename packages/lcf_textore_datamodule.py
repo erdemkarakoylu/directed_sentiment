@@ -6,7 +6,7 @@ from torch.utils.data import Dataset, DataLoader
 
 from  transformers import AutoTokenizer
 import pytorch_lightning as pl  
-from lcf_utils import *
+from packages.lcf_utils import *
 
 
 class LCFDataset(Dataset):
@@ -25,9 +25,9 @@ class LCFDataset(Dataset):
     
     def __getitem__(self, index:int):
         data_row = self.data.iloc[index]
-        raw_text = data_row['text']
-        target = data_row['target']
-        label = data_row['label']
+        raw_text = data_row['masked_clean_text']
+        target = '<target>'
+        label = data_row['labels']
         tokenizer_is_roberta = 'Roberta' in type(self.tokenizer).__name__
         text_bert_indices = get_text_bert_indices(self.encoder, raw_text, target)
         bert_segments_ids = get_bert_segments_ids(

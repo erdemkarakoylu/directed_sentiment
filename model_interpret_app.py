@@ -9,8 +9,8 @@ import pandas as pd
 import numpy as np
 
 import pytorch_lightning as pl
-from lcf_textore_datamodule import DataModule
-from lcf_pl_model import LCFS_BERT_PL
+from packages.lcf_textore_datamodule import DataModule
+from packages.lcf_pl_model import LCFS_BERT_PL
 
 from loguru import logger
 

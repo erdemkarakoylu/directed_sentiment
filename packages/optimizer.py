@@ -3,7 +3,7 @@ from pathlib import Path
 import pandas as pd
 import pytorch_lightning as pl
 from lcf_datamodule import DataModule
-from lcf_pl_model import LCFS_BERT_PL
+from packages.lcf_pl_model import LCFS_BERT_PL
 import optuna
 from optuna.integration.pytorch_lightning import PyTorchLightningPruningCallback
 from optuna.samplers import TPESampler

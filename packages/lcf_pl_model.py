@@ -9,7 +9,7 @@ from pytorch_transformers import AutoModel
 from pytorch_transformers.modeling_bert import BertConfig, BertPooler
 from torchmetrics import Accuracy, F1Score
 
-from lcfs_model import PointwiseCovNet, SelfAttention
+from packages.lcfs_model import PointwiseCovNet, SelfAttention
 
 """
 opts needed :
@@ -53,7 +53,6 @@ class LCFS_BERT_PL(pl.LightningModule):
         self.bert_pooler = BertPooler(sa_config)
         self.dense = nn.Linear(self.hidden, self.polarities_dim)
         self.save_hyperparameters()
-
 
     def feature_dynamic_mask(
         self, text_local_indices, target_indices, distances_input=None):
@@ -177,7 +176,6 @@ class LCFS_BERT_PL(pl.LightningModule):
             optimizer, mode='min', factor=0.3, patience=3, threshold=0.01, 
             cooldown=0, min_lr=1e-8 
         )
-        #return [optimizer], [lr_scheduler]
         return dict(optimizer=optimizer, lr_scheduler=lr_scheduler, monitor='val_loss')
     
     def run_step(self, batch, stage):
@@ -198,10 +196,6 @@ class LCFS_BERT_PL(pl.LightningModule):
         self.log('loss', loss, on_step=False, on_epoch=True)
         return loss
     
-    """ def on_validattion_start(self):
-        self.logger.log_hyperparams(self.hparams, {'val_loss':0})"""
-    
-
     def validation_step(self, batch, batch_idx):
         y_true = batch['polarity']
         y_hat = self(batch)
