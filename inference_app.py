@@ -2,17 +2,18 @@ from pathlib import Path
 
 from annotated_text import annotated_text
 import streamlit as st
+import torch
+from model_interpret_app import MAX_SEQ_LENGTH
 
 from packages.lcf_textore_datamodule import DataModule
 from packages.lcf_pl_model import LCFS_BERT_PL
 
-CKPT_PATH = Path(
-    'tb_lcf_mixed_finetune_logs/lcf_mixed/version_0/checkpoints/epoch=39-step=6240.ckpt'
-    )
+CHKPT_PATH = Path.cwd() / 'experiments/experiment_logs/best_model_checkpoint.ckpt'
 BERT_MODEL = 'bert-base-uncased'
+DATA_PATH = Path.cwd()/'data/textore/ready/eval_samples_added_2_training'
 TRAIN_BATCH_SIZE = 8
 MAX_SEQ_LENGTH = 48
-DATA_PATH = Path.cwd()/'data/textore/ready/eval_samples_added_2_training'
+
 
 def load_datamodule():
     dm = DataModule(
@@ -21,7 +22,16 @@ def load_datamodule():
     return dm
 
 def load_model():
-    return LCFS_BERT_PL.load_from_checkpoint(CKPT_PATH)
+    model = LCFS_BERT_PL(
+    BERT_MODEL, 
+    )
+    if not torch.cuda.is_available():
+        device = torch.device('cpu')
+    else:
+        device = torch.device('cuda')
+    model.load_state_dict(torch.load(CHKPT_PATH, map_location=device))
+    model.eval()
+    return model
 
 def create_annotation(text, target):
     text_list = text.split(" ")
