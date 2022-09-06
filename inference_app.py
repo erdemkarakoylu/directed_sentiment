@@ -35,11 +35,9 @@ def load_model():
     model.eval()
     return model
 
+#def get_sample_data
 
 
-"""
-def create_annotation(text, target):
-    text_list = text.split(" ")"""
 
 data = load_datamodule().test_df
 sample = data.sample(1).iloc[0]
