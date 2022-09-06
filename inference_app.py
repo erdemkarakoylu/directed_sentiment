@@ -8,6 +8,8 @@ from model_interpret_app import MAX_SEQ_LENGTH
 from packages.lcf_textore_datamodule import DataModule
 from packages.lcf_pl_model import LCFS_BERT_PL
 
+#TODO: create option for manual data input + data preprocessing.
+
 CHKPT_PATH = Path.cwd() / 'experiments/experiment_logs/best_model_checkpoint.ckpt'
 BERT_MODEL = 'bert-base-uncased'
 DATA_PATH = Path.cwd()/'data/textore/ready/eval_samples_added_2_training'
@@ -33,8 +35,11 @@ def load_model():
     model.eval()
     return model
 
+
+
+"""
 def create_annotation(text, target):
-    text_list = text.split(" ")
+    text_list = text.split(" ")"""
 
 data = load_datamodule().test_df
 sample = data.sample(1).iloc[0]
