@@ -4,6 +4,8 @@ from random import randint
 from annotated_text import annotated_text
 import streamlit as st
 import torch
+from torch.utils.data.dataloader import DataLoader
+import pytorch_lightning as pl
 #from pages.model_interpretation import MAX_SEQ_LENGTH
 
 from packages.lcf_textore_datamodule import DataModule
@@ -69,4 +71,7 @@ button = st.button("Predict sentiment toward target")
 sentiment_code = {0: "Negative", 1: "Neutral", 2: "Positive"}
 
 if button:
-    output = model
+    dl = DataLoader([processed_sample_dict])
+    trainer = pl.Trainer()
+    sample_pred = trainer.predict(model, dataloaders=dl)[0]
+    sample_pred_code = sample_pred.numpy()
