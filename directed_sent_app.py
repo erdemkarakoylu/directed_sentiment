@@ -18,6 +18,8 @@ BERT_MODEL = 'bert-base-uncased'
 DATA_PATH = Path.cwd()/'data/textore/ready/eval_samples_added_2_training'
 TRAIN_BATCH_SIZE = 8
 MAX_SEQ_LENGTH = 48
+SRD = 9
+LCF='cdw'
 
 
 def load_datamodule():
@@ -26,9 +28,12 @@ def load_datamodule():
         data_dir=DATA_PATH, max_seq_length=MAX_SEQ_LENGTH)
     return dm
 
+
 def load_model():
     model = LCFS_BERT_PL(
-    BERT_MODEL, 
+        BERT_MODEL, max_seq_length=MAX_SEQ_LENGTH,
+        synthactic_distance_dependency=SRD,
+        local_context_focus=LCF
     )
     if not torch.cuda.is_available():
         device = torch.device('cpu')
@@ -73,5 +78,8 @@ sentiment_code = {0: "Negative", 1: "Neutral", 2: "Positive"}
 if button:
     dl = DataLoader([processed_sample_dict])
     trainer = pl.Trainer()
-    sample_pred = trainer.predict(model, dataloaders=dl)[0]
-    sample_pred_code = sample_pred.numpy()
+    sample_pred_logits = trainer.predict(
+        model, dataloaders=dl)[0].detach().numpy()[0]
+    sample_pred_code = sample_pred_logits.argmax()
+    st.write(f"Logits: {sample_pred_logits}")
+    st.write(f"Prediction: {sentiment_code[sample_pred_code]}")
