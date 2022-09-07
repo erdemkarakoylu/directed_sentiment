@@ -63,3 +63,10 @@ annotated_text(
     annotation_dict['context_beg'], 
     (annotation_dict['target_string'], "TARGET"),
     annotation_dict['context_end'])
+
+model = load_model()
+button = st.button("Predict sentiment toward target")
+sentiment_code = {0: "Negative", 1: "Neutral", 2: "Positive"}
+
+if button:
+    output = model
