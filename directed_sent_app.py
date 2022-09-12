@@ -1,3 +1,4 @@
+from multiprocessing import allow_connection_pickling
 from pathlib import Path
 from random import randint
 
@@ -6,7 +7,7 @@ import streamlit as st
 import torch
 from torch.utils.data.dataloader import DataLoader
 import pytorch_lightning as pl
-#from pages.model_interpretation import MAX_SEQ_LENGTH
+from numpy import array2string
 
 from packages.lcf_textore_datamodule import DataModule
 from packages.lcf_pl_model import LCFS_BERT_PL
@@ -21,14 +22,13 @@ MAX_SEQ_LENGTH = 48
 SRD = 9
 LCF='cdw'
 
-
 def load_datamodule():
     dm = DataModule(
         model_name=BERT_MODEL, batch_size=TRAIN_BATCH_SIZE, num_workers=2,
         data_dir=DATA_PATH, max_seq_length=MAX_SEQ_LENGTH)
     return dm
 
-
+@st.cache(persist=True, allow_output_mutation=True)
 def load_model():
     model = LCFS_BERT_PL(
         BERT_MODEL, max_seq_length=MAX_SEQ_LENGTH,
@@ -61,25 +61,43 @@ def parse_text_for_annotation(data_dict):
         target_string=target_string, 
         context_end=context_end)
 
-datamodule = load_datamodule()
-processed_sample_dict, raw_sample_dict = get_sample_data(datamodule)
+
 st.title('Directed Sentiment Predictor')
-st.subheader('Input context and target')
-annotation_dict = parse_text_for_annotation(raw_sample_dict)
-annotated_text(
-    annotation_dict['context_beg'], 
-    (annotation_dict['target_string'], "TARGET"),
-    annotation_dict['context_end'])
-
+datamodule = load_datamodule()
 model = load_model()
-button = st.button("Predict sentiment toward target")
-sentiment_code = {0: "Negative", 1: "Neutral", 2: "Positive"}
+load_sample_button = st.button("Load Sample and Run Model")
+# Initialize session state
+if "load_state" not in st.session_state:
+    st.session_state.load_state = False
+st.markdown("")
+sentiment_code = {
+    0: {"label": "Negative", "color": "#ff4040"}, 
+    1: {"label": "Neutral", "color": "#000000"}, 
+    2: {"label": "Positive", "color": "#00cdcd"}
+    }
 
-if button:
-    dl = DataLoader([processed_sample_dict])
+if load_sample_button or st.session_state.load_state:
+    st.session_state.load_state = True
     trainer = pl.Trainer()
+    processed_sample_dict, raw_sample_dict = get_sample_data(datamodule)
+    st.subheader('Input context and target')
+    annotation_dict = parse_text_for_annotation(raw_sample_dict)
+    annotated_text(
+        annotation_dict['context_beg'],  
+        (annotation_dict['target_string'], "TARGET"),
+        annotation_dict['context_end'], )
+    st.markdown("")
+    st.markdown("")
+    dl = DataLoader([processed_sample_dict])
+   
     sample_pred_logits = trainer.predict(
         model, dataloaders=dl)[0].detach().numpy()[0]
     sample_pred_code = sample_pred_logits.argmax()
-    st.write(f"Logits: {sample_pred_logits}")
-    st.write(f"Prediction: {sentiment_code[sample_pred_code]}")
+    st.write(
+        f"Logits: {array2string(sample_pred_logits, precision=2, floatmode='fixed')}"
+        )
+    #st.write(f"Prediction: {sentiment_code[sample_pred_code]}")
+    annotated_text(
+        "Prediction:  ",
+        (sentiment_code[sample_pred_code]['label'], "", sentiment_code[sample_pred_code]["color"])
+    )
