@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "43f7f53c5382120ea06f8a1cbcd2f876178ff8d6dc92694ffc101e953ea3867d"
+            "sha256": "6f21f1cc15dbe78400149a588bc9bf1bb653f2a72c9810bd5392d3e1624ff82e"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -2478,6 +2478,13 @@
             ],
             "markers": "python_version >= '3.7'",
             "version": "==1.12.1"
+        },
+        "torch-geometric": {
+            "hashes": [
+                "sha256:32347402076ccf60fa50312825178f1e3e5ce5e7b3b3a8b2729ac699da24525d"
+            ],
+            "index": "pypi",
+            "version": "==2.1.0.post1"
         },
         "torchmetrics": {
             "hashes": [
