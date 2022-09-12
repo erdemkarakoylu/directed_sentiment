@@ -9,8 +9,8 @@
             "type": "python",
             "request": "launch",
             "module": "streamlit",
-            "args": ["run", "${file}"],
-            "justMyCode": true
+            "justMyCode": true,
+            "args": ["run", "${file}"]
         }
     ]
 }
