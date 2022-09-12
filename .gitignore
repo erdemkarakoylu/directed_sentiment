@@ -8,6 +8,6 @@ lcfs_runs/
 *.ipynb
 *.png
 *.db
-*.txt
+
 data_utils_from_author.py
 ancillary/
