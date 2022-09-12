@@ -16,6 +16,7 @@ st-annotated-text = "*"
 optuna = "*"
 spacy = "*"
 networkx = "*"
+torch-geometric = "*"
 
 [dev-packages]
 
