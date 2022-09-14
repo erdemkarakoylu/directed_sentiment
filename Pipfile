@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pytorch-lightning = "==1.2.0"
+pytorch-lightning = "==1.7.6"
 ipython = "*"
 torchmetrics = "*"
 pytorch-transformers = "*"

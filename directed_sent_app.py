@@ -46,7 +46,13 @@ def load_model():
 def get_sample_data(dm):
     num_samples = len(dm.test_dataset)
     sample_ix = randint(0, num_samples -1)
-    dataset_dict = dm.test_dataset[sample_ix]
+    ds_dict = dm.test_dataset[sample_ix]
+    dataset_dict = {k: (
+        v.clone().unsqueeze(0) if 'bert' in k else v)
+        for k, v in ds_dict.items()
+        }
+    dataset_dict['dep_distance_to_target'] = ds_dict[
+        'dep_distance_to_target'].clone().unsqueeze(0)
     df_row_dict = dm.test_df.iloc[sample_ix].to_dict()
     return dataset_dict, df_row_dict
 
@@ -88,10 +94,12 @@ if load_sample_button or st.session_state.load_state:
         annotation_dict['context_end'], )
     st.markdown("")
     st.markdown("")
-    dl = DataLoader([processed_sample_dict])
+    #dl = DataLoader([processed_sample_dict])
    
-    sample_pred_logits = trainer.predict(
-        model, dataloaders=dl)[0].detach().numpy()[0]
+    #sample_pred_logits = trainer.predict(
+    #    model, dataloaders=dl)[0].detach().numpy()[0]
+    with torch.no_grad():
+        sample_pred_logits = model(processed_sample_dict).squeeze().numpy()
     sample_pred_code = sample_pred_logits.argmax()
     st.write(
         f"Logits: {array2string(sample_pred_logits, precision=2, floatmode='fixed')}"
