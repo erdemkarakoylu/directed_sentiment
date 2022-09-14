@@ -17,6 +17,7 @@ optuna = "*"
 spacy = "*"
 networkx = "*"
 torch-geometric = "*"
+transformers = "*"
 
 [dev-packages]
 
