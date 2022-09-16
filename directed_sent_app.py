@@ -80,8 +80,8 @@ if "load_state" not in st.session_state:
 st.markdown("")
 sentiment_code = {
     0: {"label": "Negative", "color": "#ff4040"}, 
-    1: {"label": "Neutral", "color": "#000000"}, 
-    2: {"label": "Positive", "color": "#00cdcd"}
+    1: {"label": "Neutral", "color": "#5a5a5a"}, 
+    2: {"label": "Positive", "color": "#004d4d"}
     }
 
 if load_sample_button or st.session_state.load_state:
