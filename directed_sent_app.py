@@ -1,4 +1,3 @@
-from multiprocessing import allow_connection_pickling
 from pathlib import Path
 from random import randint
 
@@ -22,6 +21,11 @@ MAX_SEQ_LENGTH = 48
 SRD = 9
 LCF='cdw'
 
+if not torch.cuda.is_available():
+    DEVICE = torch.device('cpu')
+else:
+    DEVICE = torch.device('cuda')
+
 def load_datamodule():
     dm = DataModule(
         model_name=BERT_MODEL, batch_size=TRAIN_BATCH_SIZE, num_workers=2,
@@ -35,11 +39,9 @@ def load_model():
         synthactic_distance_dependency=SRD,
         local_context_focus=LCF
     )
-    if not torch.cuda.is_available():
-        device = torch.device('cpu')
-    else:
-        device = torch.device('cuda')
-    model.load_state_dict(torch.load(CHKPT_PATH, map_location=device))
+    
+    model.load_state_dict(torch.load(CHKPT_PATH))
+    model.to(DEVICE)
     model.eval()
     return model
 
@@ -48,11 +50,11 @@ def get_sample_data(dm):
     sample_ix = randint(0, num_samples -1)
     ds_dict = dm.test_dataset[sample_ix]
     dataset_dict = {k: (
-        v.clone().unsqueeze(0) if 'bert' in k else v)
+        v.clone().unsqueeze(0).to(DEVICE) if 'bert' in k else v)
         for k, v in ds_dict.items()
         }
     dataset_dict['dep_distance_to_target'] = ds_dict[
-        'dep_distance_to_target'].clone().unsqueeze(0)
+        'dep_distance_to_target'].clone().unsqueeze(0).to(DEVICE)
     df_row_dict = dm.test_df.iloc[sample_ix].to_dict()
     return dataset_dict, df_row_dict
 
