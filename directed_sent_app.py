@@ -13,7 +13,7 @@ from packages.lcf_pl_model import LCFS_BERT_PL
 
 #TODO: create option for manual data input + data preprocessing.
 
-CHKPT_PATH = Path.cwd() / 'best_model_checkpoint.ckpt'
+CHKPT_PATH = Path.cwd() / 'data'/'best_model_checkpoint.ckpt'
 BERT_MODEL = 'bert-base-uncased'
 DATA_PATH = Path.cwd()/'data/textore/ready/eval_samples_added_2_training'
 TRAIN_BATCH_SIZE = 8
